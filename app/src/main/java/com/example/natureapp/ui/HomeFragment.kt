@@ -1,4 +1,4 @@
-package com.example.natureapp
+package com.example.natureapp.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.example.natureapp.R
 import com.example.natureapp.databinding.FragmentHomeBinding
 
 
@@ -30,9 +31,9 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         _binding = null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
 

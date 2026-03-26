@@ -1,13 +1,14 @@
-package com.example.natureapp
+package com.example.natureapp.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.natureapp.databinding.ItemPlantBinding
-import models.Plant
+import com.example.natureapp.model.Plant
 
 class PlantAdapter(
-    private val plants : List<Plant>,
+    private var plants : List<Plant>,
     private val onPlantClick: (Plant) -> Unit,
 ) : RecyclerView.Adapter<PlantAdapter.PlantViewHolder>() {
 
@@ -16,13 +17,13 @@ class PlantAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): PlantAdapter.PlantViewHolder {
+    ): PlantViewHolder {
         val binding = ItemPlantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return PlantViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PlantAdapter.PlantViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PlantViewHolder, position: Int) {
         val plant = plants[position]
 
         holder.binding.tvPlantName.text = plant.name
@@ -36,5 +37,11 @@ class PlantAdapter(
     }
 
     override fun getItemCount(): Int = plants.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(newPlants : List<Plant>) : Unit {
+        this.plants = newPlants
+        notifyDataSetChanged()
+    }
 
 }

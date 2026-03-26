@@ -1,4 +1,4 @@
-package com.example.natureapp
+package com.example.natureapp.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,13 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.natureapp.databinding.FragmentAddPlantBinding
+import com.example.natureapp.model.Plant
+import com.example.natureapp.viewmodel.PlantViewModel
 
 class AddPlantFragment : Fragment() {
 
     private var _binding : FragmentAddPlantBinding? = null
     private val binding get() = _binding!!
+
+
+    private val sharedViewModel : PlantViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,12 +35,11 @@ class AddPlantFragment : Fragment() {
 
             if(name.isNotEmpty()){
 
-                val resultBundle = Bundle().apply {
-                    putString("new_plant_name", name)
-                    putString("new_plant_desc", desc)
-                }
+                val newId : Int = (sharedViewModel.plants.value?.size ?: 0) + 1
+                val newPlant : Plant = Plant(id = newId, name = name, description = desc)
 
-                parentFragmentManager.setFragmentResult("add_plant_request", resultBundle)
+
+                sharedViewModel.addPlant(newPlant)
 
                 Toast.makeText(requireContext(), "$name guardada exitosamente", Toast.LENGTH_SHORT).show()
                 findNavController().navigateUp()
@@ -47,8 +53,8 @@ class AddPlantFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
