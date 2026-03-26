@@ -1,17 +1,53 @@
 package com.example.natureapp.repository
 
-import com.example.natureapp.R
+import androidx.lifecycle.LiveData
+import com.example.natureapp.data.local.PlantDao
+import com.example.natureapp.data.remote.PlantApiService
+import com.example.natureapp.data.remote.PlantDto
+import com.example.natureapp.data.remote.RetrofitClient.apiService
 import com.example.natureapp.model.Plant
-import kotlinx.coroutines.delay
+import retrofit2.Response
 
-class PlantRepository {
+class PlantRepository(private val plantDao : PlantDao, private val apiService: PlantApiService) {
 
-    suspend fun getPlants() : List<Plant> {
-        delay(1500)
-        return listOf(
-            Plant(1, "Aloe Vera", "Riego escaso, propagar por hijuelos."),
-            Plant(2, "Monstera Deliciosa", "Luz indirecta brillante. Humedad alta."),
-            Plant(3, "Venus Atrapamoscas", "Planta carnívora; requiere agua destilada.")
-        )
+    val allPlants : LiveData<List<Plant>> = plantDao.getAllPlants()
+
+
+    suspend fun refreshPlantsRemote(token : String){
+        try {
+            val response : Response<List<PlantDto>> = apiService.getPlants(token)
+
+            if(response.isSuccessful){
+                val dtos : List<PlantDto>? = response.body()
+
+                dtos?.let { list : List<PlantDto> ->
+                    val entities : List<Plant> = list.map {
+                        dto : PlantDto ->
+                        Plant(
+                            id = dto.id,
+                            name = dto.name,
+                            description = dto.name
+                        )
+                    }
+                    plantDao.insertPlants(entities)
+                }
+            }
+
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
+    }
+
+
+
+    suspend fun insert(plant : Plant, token : String) : Unit {
+        plantDao.insertPlant(plant)
+
+        try {
+            val dto : PlantDto = PlantDto(id = plant.id, name = plant.name, description = plant.description)
+            apiService.createPlant(token, dto)
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
     }
 }

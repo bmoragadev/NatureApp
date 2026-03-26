@@ -23,6 +23,9 @@ class HomeFragment : Fragment() {
     ): View? {
         _binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
 
+        binding.tvTitle.setOnClickListener {
+            throw RuntimeException("Test Crash: Validando Firebase Crashlytics")
+        }
 
         binding.btnEnter.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_listFragment)

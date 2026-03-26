@@ -36,7 +36,7 @@ class ListFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
 
-        sharedViewModel.fetchPlants()
+        sharedViewModel.syncDataRemote()
 
         binding.fabAddPlant.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_addPlantFragment)
@@ -65,6 +65,7 @@ class ListFragment : Fragment() {
                 plantAdapter.updateData(plants)
             }
         })
+
 
         sharedViewModel.isLoading.observe(viewLifecycleOwner, Observer<Boolean> { isLoading: Boolean ->
             binding.progressHorizontal.visibility = if (isLoading) View.VISIBLE else View.GONE

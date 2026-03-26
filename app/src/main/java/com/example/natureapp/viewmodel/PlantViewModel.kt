@@ -1,44 +1,48 @@
 package com.example.natureapp.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.natureapp.data.local.PlantDatabase
+import com.example.natureapp.data.remote.RetrofitClient
 import com.example.natureapp.model.Plant
-import kotlinx.coroutines.delay
+import com.example.natureapp.repository.PlantRepository
 import kotlinx.coroutines.launch
+class PlantViewModel(application: Application) : AndroidViewModel(application) {
 
-class PlantViewModel : ViewModel() {
+    private val repository : PlantRepository
+    var plants : LiveData<List<Plant>>
 
-    private val _plants: MutableLiveData<List<Plant>> = MutableLiveData(emptyList())
-    val plants: LiveData<List<Plant>> get() = _plants
+    private val _isLoading : MutableLiveData<Boolean> = MutableLiveData(false)
+    val isLoading : LiveData<Boolean> get() = _isLoading
 
-    private val _isLoading: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isLoading: LiveData<Boolean> get() = _isLoading
+    private val fakeAuthToken : String = "Bearer mi_super_token_secreto_123"
 
-    fun fetchPlants(): Unit {
-        if (_plants.value?.isNotEmpty() == true) return
 
+    init {
+        val plantDao = PlantDatabase.getDatabase(application).plantDao()
+        val apiService = RetrofitClient.apiService
+
+        repository = PlantRepository(plantDao, apiService)
+        plants = repository.allPlants
+    }
+
+    fun syncDataRemote() : Unit {
         viewModelScope.launch {
             _isLoading.value = true
-            delay(1500)
-
-            val initialList: List<Plant> = listOf(
-                Plant(1, "Aloe Vera", "Riego escaso, propagar por hijuelos."),
-                Plant(2, "Monstera Deliciosa", "Luz indirecta brillante. Humedad alta."),
-                Plant(3, "Venus Atrapamoscas", "Planta carnívora; requiere agua destilada.")
-            )
-
-            _plants.value = initialList
+            repository.refreshPlantsRemote(fakeAuthToken)
             _isLoading.value = false
         }
     }
 
-    fun addPlant(newPlant: Plant): Unit {
-        val currentList: List<Plant> = _plants.value ?: emptyList()
-        val updatedList: MutableList<Plant> = currentList.toMutableList()
-
-        updatedList.add(newPlant)
-        _plants.value = updatedList
+    fun addPlant(newPlant : Plant) : Unit {
+        viewModelScope.launch {
+            repository.insert(newPlant, fakeAuthToken)
+        }
     }
+
+
+
 }
