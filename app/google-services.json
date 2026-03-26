@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "135017492619",
+    "project_id": "natureapp-23ecf",
+    "storage_bucket": "natureapp-23ecf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135017492619:android:ed1fa272b70b48ec96e48e",
+        "android_client_info": {
+          "package_name": "com.example.natureapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARlajdFZtlNMwecoitso3pzyqjBiQBLTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

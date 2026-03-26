@@ -35,8 +35,7 @@ class AddPlantFragment : Fragment() {
 
             if(name.isNotEmpty()){
 
-                val newId : Int = (sharedViewModel.plants.value?.size ?: 0) + 1
-                val newPlant : Plant = Plant(id = newId, name = name, description = desc)
+                val newPlant : Plant = Plant(id = 0, name = name, description = desc)
 
 
                 sharedViewModel.addPlant(newPlant)
